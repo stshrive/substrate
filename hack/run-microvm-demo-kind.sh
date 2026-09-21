@@ -24,23 +24,15 @@ cd "${ROOT}"
 # hack/install-ate-kind.sh uses, so the image repo and snapshot bucket match what
 # gets installed in the cluster. All arguments are forwarded to run-microvm-demo.sh.
 
+source hack/util/kind-env.sh
+
 # shellcheck disable=SC2155 # safe initialization
 goarch=$(go env GOARCH)
 
-# override reading dev env -- otherwise .ate-dev-env.sh would point images/assets
-# at GKE/GCS instead of the local registry and the in-cluster rustfs.
-export NO_DEV_ENV="true"
-# images are pushed to the local registry
-export KO_DOCKER_REPO="${KO_DOCKER_REPO:-localhost:5001}"
 # build for the host architecture
 export KO_DEFAULTPLATFORMS="linux/${goarch}"
 # use the kind control-plane path (install-ate-kind.sh) + stage assets to rustfs
 export ATE_INSTALL_KIND="true"
-# default bucket name for local deployment (served by the in-cluster rustfs)
-export BUCKET_NAME="${BUCKET_NAME:-ate-snapshots}"
-# target the local kind cluster's context
-KIND_CLUSTER_NAME="${KIND_CLUSTER_NAME:-kind}"
-export KUBECTL_CONTEXT="${KUBECTL_CONTEXT:-kind-${KIND_CLUSTER_NAME}}"
 # unset other env from ate-dev-env.sh in case the developer already sourced them
 unset GCE_REGION CLUSTER_LOCATION NETWORK SUBNETWORK MEMORYSTORE_INSTANCE PROJECT_ID
 

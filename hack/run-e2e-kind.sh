@@ -26,16 +26,6 @@ cd "${ROOT}"
 # what was installed in the cluster. All arguments are forwarded to
 # hack/run-e2e.sh (run with -h to see them).
 
-# override reading dev env -- otherwise .ate-dev-env.sh would clobber the
-# Kind values below (e.g. point snapshots at a GCS bucket that doesn't exist
-# in the in-cluster rustfs, causing golden-snapshot uploads to 404).
-export NO_DEV_ENV="true"
-# images are pushed to the local registry
-export KO_DOCKER_REPO="${KO_DOCKER_REPO:-localhost:5001}"
-# default bucket name for local deployment (served by in-cluster rustfs)
-export BUCKET_NAME="${BUCKET_NAME:-ate-snapshots}"
-# target the local Kind cluster's context
-KIND_CLUSTER_NAME="${KIND_CLUSTER_NAME:-kind}"
-export KUBECTL_CONTEXT="${KUBECTL_CONTEXT:-kind-${KIND_CLUSTER_NAME}}"
+source hack/util/kind-env.sh
 
 exec "${ROOT}/hack/run-e2e.sh" "$@"
